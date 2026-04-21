@@ -3,12 +3,12 @@ package css_selector
 import "strings"
 
 func ParseSelector(input string) *SelectorNode {
-	tokens := Tokenize(input)
-	return ConvertTokensToNodes(tokens)
+	tokens := tokenize(input)
+	return convertTokensToNodes(tokens)
 }
 
 // ubah string input menjadi tokens
-func Tokenize(input string) []string {
+func tokenize(input string) []string {
 	var isAttribute bool
 	var token strings.Builder
 	var tokens []string
@@ -65,14 +65,14 @@ func Tokenize(input string) []string {
 }
 
 // ubah tokens menjadi SelectorNode
-func ConvertTokensToNodes(tokens []string) *SelectorNode {
+func convertTokensToNodes(tokens []string) *SelectorNode {
 	head := &SelectorNode{}
 	current := head
 
 	for _, t := range tokens {
 		switch {
 		case t == " " || t == ">" || t == "+" || t == "~":
-			current.Relation = MapRelation(t)
+			current.Relation = mapRelation(t)
 			newNode := &SelectorNode{}
 			current.Prev = newNode
 			current = newNode
@@ -82,7 +82,7 @@ func ConvertTokensToNodes(tokens []string) *SelectorNode {
 		case t[0] == '#':
 			current.ID = t[1:]
 		case t[0] == '[':
-			attribute:= ParseAttribute(t)
+			attribute:= parseAttribute(t)
 			current.Attributes = append(current.Attributes, attribute)
 		default:
 			current.Tag = t
@@ -92,7 +92,7 @@ func ConvertTokensToNodes(tokens []string) *SelectorNode {
 }
 
 // helper untuk parse atribut
-func ParseAttribute(t string) AttributeSelector {
+func parseAttribute(t string) AttributeSelector {
 	attribute:= AttributeSelector{}
 	var builder strings.Builder
 	var isVal bool
@@ -138,7 +138,7 @@ func ParseAttribute(t string) AttributeSelector {
 }
 
 // helper untuk mapping combinator ke nama relasi
-func MapRelation(t string) string {
+func mapRelation(t string) string {
 	switch t {
 	case " ": return "descendant"
 	case ">": return "child"

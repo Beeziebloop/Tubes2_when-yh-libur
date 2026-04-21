@@ -2,7 +2,7 @@ package css_selector
 
 import (
     "strings"
-    "../domtree"
+    "Tubes2_when-yh-libur/src/backend/domtree"
 )
 
 func MakeMatchFunc(selector string) domtree.MatchFunc {
@@ -13,16 +13,16 @@ func MakeMatchFunc(selector string) domtree.MatchFunc {
 }
 
 func MatchSelector(dom *domtree.Node, selector *SelectorNode) bool {
-	return MatchSelectorRecursive(dom, selector)
+	return matchSelectorRecursive(dom, selector)
 }
 
-func MatchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
+func matchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
 	if node == nil {
 		return false
 	}
 
 	// cek node sekarang apakah cocok
-	if !MatchNode(node, sel) {
+	if !matchNode(node, sel) {
 		return false
 	}
 
@@ -34,12 +34,12 @@ func MatchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
 	// lanjut sesuai relation
 	switch sel.Relation {
 	case "child":
-		return MatchSelectorRecursive(node.Parent, sel.Prev)
+		return matchSelectorRecursive(node.Parent, sel.Prev)
 
 	case "descendant":
 		cur := node.Parent
 		for cur != nil {
-			if MatchSelectorRecursive(cur, sel.Prev) {
+			if matchSelectorRecursive(cur, sel.Prev) {
 				return true
 			}
 			cur = cur.Parent
@@ -47,12 +47,12 @@ func MatchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
 		return false
 
 	case "adjacent_sibling":
-		return MatchSelectorRecursive(node.ImmediateSiblingBefore(), sel.Prev)
+		return matchSelectorRecursive(node.ImmediateSiblingBefore(), sel.Prev)
 
 	case "general_sibling":
 		siblings := node.SiblingsBefore()
 		for i := len(siblings) - 1; i >= 0; i-- {
-			if MatchSelectorRecursive(siblings[i], sel.Prev) {
+			if matchSelectorRecursive(siblings[i], sel.Prev) {
 				return true
 			}
 		}
@@ -62,7 +62,7 @@ func MatchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
 	return false
 }
 
-func MatchNode(dom *domtree.Node, selector *SelectorNode) bool {
+func matchNode(dom *domtree.Node, selector *SelectorNode) bool {
 	if dom == nil {
 		return false
 	}
@@ -85,14 +85,14 @@ func MatchNode(dom *domtree.Node, selector *SelectorNode) bool {
 	}
 
 	// attribute
-	if !MatchAttributes(dom, selector) {
+	if !matchAttributes(dom, selector) {
 		return false
 	}
 
 	return true
 }
 
-func MatchAttributes(dom *domtree.Node, selector *SelectorNode) bool {
+func matchAttributes(dom *domtree.Node, selector *SelectorNode) bool {
 	for _, attr := range selector.Attributes {
 		var val string
 		var found bool
