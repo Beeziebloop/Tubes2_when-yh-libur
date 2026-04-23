@@ -140,7 +140,6 @@ async function animateTraversal(logs) {
         const logEntries = document.querySelectorAll('#logContainer li');
         if (logEntries[i]) {
             logEntries[i].classList.add('current-step');
-            logEntries[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         // Highlight node di pohon
@@ -163,6 +162,7 @@ async function animateTraversal(logs) {
 }
 
 // Highlight jalur dari root ke setiap node yang ditemukan (matched)
+// Hanya untuk ancestor yang sudah memiliki class 'visited' (sudah dikunjungi)
 function highlightMatchedPaths(traversalLog) {
     if (!traversalLog || traversalLog.length === 0) return;
     
@@ -175,16 +175,17 @@ function highlightMatchedPaths(traversalLog) {
     });
     if (matchedIndices.size === 0) return;
 
-    // Untuk setiap node index yang matched, cari span dengan data-index tersebut
     matchedIndices.forEach(idx => {
         const nodeSpan = document.querySelector(`.node-element[data-index="${idx}"]`);
         if (nodeSpan) {
             const li = nodeSpan.closest('li');
             if (li) {
-                // Tambahkan kelas 'matched-path' pada li dan semua ancestor li-nya
+                // Naik ke ancestor, tapi hanya yang sudah memiliki class 'visited'
                 let current = li;
                 while (current && current.tagName === 'LI') {
-                    current.classList.add('matched-path');
+                    if (current.classList.contains('visited')) {
+                        current.classList.add('matched-path');
+                    }
                     current = current.parentElement?.closest('li');
                 }
             }
