@@ -48,7 +48,7 @@ func loadHTML(input string) (*Node, error){
 	   if err != nil{
 		return nil, err
 	   }
-	   rawHTML = input
+	   rawHTML = html
 	}else{
 		rawHTML = input
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 //convert raw html jadi DOM tree. html.Tokenizer bakalan ngescan html mentahnya dan ngubah jadi stream of tokens. dari situ kita bisa bangun node tree kita dengan stack :D
-func parseHTML(rawhtml string) *Node {
+func parseHTML(rawHTML string) *Node {
 	if strings.TrimSpace(rawHTML) == ""{
 		return nil
 	}
@@ -80,14 +80,14 @@ func parseHTML(rawhtml string) *Node {
 				}
 			}
 		case html.TextToken:
-			//attach text ke current top node sebagai innertext
-			text := string.TrimSpace(string(tokenizer.Text()))
+			//attach text ke current top node sebagai InsideText
+			text := strings.TrimSpace(string(tokenizer.Text()))
 			if text != "" && len(stack) > 0{
 				top := stack[len(stack)-1]
-				if top.InnerText == ""{
-					top.InnerText = text
+				if top.InsideText == ""{
+					top.InsideText = text
 				}else{
-					top.InnerText += " " + text
+					top.InsideText += " " + text
 				}
 			}
 		case html.CommentToken: 
