@@ -1,22 +1,19 @@
-package css_selector
+package backend
 
-import (
-    "strings"
-    "Tubes2_when-yh-libur/src/backend/domtree"
-)
+import "strings"
 
-func MakeMatchFunc(selector string) domtree.MatchFunc {
+func MakeMatchFunc(selector string) MatchFunc {
     parsed := ParseSelector(selector)
-    return func(node *domtree.Node, _ string) bool {
+    return func(node *Node, _ string) bool {
         return MatchSelector(node, parsed)
     }
 }
 
-func MatchSelector(dom *domtree.Node, selector *SelectorNode) bool {
+func MatchSelector(dom *Node, selector *SelectorNode) bool {
 	return matchSelectorRecursive(dom, selector)
 }
 
-func matchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
+func matchSelectorRecursive(node *Node, sel *SelectorNode) bool {
 	if node == nil {
 		return false
 	}
@@ -62,7 +59,7 @@ func matchSelectorRecursive(node *domtree.Node, sel *SelectorNode) bool {
 	return false
 }
 
-func matchNode(dom *domtree.Node, selector *SelectorNode) bool {
+func matchNode(dom *Node, selector *SelectorNode) bool {
 	if dom == nil {
 		return false
 	}
@@ -92,7 +89,7 @@ func matchNode(dom *domtree.Node, selector *SelectorNode) bool {
 	return true
 }
 
-func matchAttributes(dom *domtree.Node, selector *SelectorNode) bool {
+func matchAttributes(dom *Node, selector *SelectorNode) bool {
 	for _, attr := range selector.Attributes {
 		var val string
 		var found bool

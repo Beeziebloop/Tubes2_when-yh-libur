@@ -1,4 +1,4 @@
-package css_selector
+package backend
 
 type AttributeSelector struct {
     Name string
