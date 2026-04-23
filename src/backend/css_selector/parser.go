@@ -4,7 +4,12 @@ import "strings"
 
 func ParseSelector(input string) *SelectorNode {
 	tokens := tokenize(input)
-	return convertTokensToNodes(tokens)
+	head := convertTokensToNodes(tokens)
+	current := head
+	for current.Prev != nil {
+		current = current.Prev
+	}
+	return current
 }
 
 // ubah string input menjadi tokens
@@ -65,6 +70,7 @@ func tokenize(input string) []string {
 }
 
 // ubah tokens menjadi SelectorNode
+// ubah tokens menjadi SelectorNode
 func convertTokensToNodes(tokens []string) *SelectorNode {
 	head := &SelectorNode{}
 	current := head
@@ -78,11 +84,17 @@ func convertTokensToNodes(tokens []string) *SelectorNode {
 			current = newNode
 
 		case t[0] == '.':
-			current.Classes = append(current.Classes, t[1:])
+			classPart := t[1:]
+			classes := strings.Split(classPart, ".")
+			for _, c := range classes {
+				if c != "" {
+					current.Classes = append(current.Classes, c)
+				}
+			}
 		case t[0] == '#':
 			current.ID = t[1:]
 		case t[0] == '[':
-			attribute:= parseAttribute(t)
+			attribute := parseAttribute(t)
 			current.Attributes = append(current.Attributes, attribute)
 		default:
 			current.Tag = t
