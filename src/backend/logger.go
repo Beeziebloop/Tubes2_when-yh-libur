@@ -6,7 +6,7 @@ import(
 	"time"
 )
 
-func PrintTraversalLogResult(result TraversalResult, selector string, filename string) error{
+func PrintTraversalLogResult(result TraversalRes, selector string, filename string) error{
 	f, err := os.Create(filename)
 	if err != nil{
 		return fmt.Errorf("Gagal bikin logfile: %w", err)
