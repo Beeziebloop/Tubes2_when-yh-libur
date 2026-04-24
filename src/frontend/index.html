@@ -32,25 +32,27 @@
         </div>
       </div>
 
-      <div class="grid-inputs">
-        <div>
-          <label>Algoritma</label>
-          <select id="algorithm">
-            <option value="BFS">Breadth First Search (BFS)</option>
-            <option value="DFS">Depth First Search (DFS)</option>
-          </select>
-        </div>
-        <div>
-          <label>Top N Results</label>
-          <input type="number" id="topN" value="-1" min="-1" step="1" />
-          <small class="input-hint">-1 = tampilkan semua hasil</small>
-        </div>
-      </div>
-
       <label>CSS Selector</label>
       <input type="text" id="selector" placeholder="Contoh: div.container > p" value="" />
 
-      <button id="searchBtn" class="primary-btn">Mulai Penelusuran</button>
+      <label>Algoritma</label>
+      <select id="algorithm">
+        <option value="BFS">Breadth First Search (BFS)</option>
+        <option value="DFS">Depth First Search (DFS)</option>
+      </select>
+
+      <label>Top N Results</label>
+      <input type="number" id="topN" value="-1" min="-1" step="1" />
+      <small class="input-hint">-1 = tampilkan semua hasil</small>
+
+      <div style="margin: 16px 0;">
+        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
+          <input type="checkbox" id="enableAnimation" checked />
+          <span>Tampilkan animasi traversal</span>
+        </label>
+      </div>
+
+      <button id="searchBtn" class="primary-btn">Search</button>
     </section>
 
     <section class="card visualization-area">

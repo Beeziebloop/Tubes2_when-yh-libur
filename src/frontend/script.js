@@ -1,4 +1,4 @@
-// Tab switching
+// tab switching
 function switchTab(type) {
     const urlContainer = document.getElementById('input-url-container');
     const rawContainer = document.getElementById('input-raw-container');
@@ -24,8 +24,9 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     const selector = document.getElementById('selector').value.trim();
     let topN = parseInt(document.getElementById('topN').value, 10);
     const isUrlMode = document.getElementById('btn-url').classList.contains('active');
+    const enableAnimation = document.getElementById('enableAnimation').checked;
 
-    // Validasi TopN
+    // validasi TopN
     if (isNaN(topN)) topN = -1;
     if (topN < -1) {
         alert("Top N tidak boleh kurang dari -1. -1 berarti semua hasil.");
@@ -33,7 +34,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
         topN = -1;
     }
 
-    // Validasi selector tidak kosong
+    // validasi selector ga kosong
     if (!selector) {
         alert("CSS Selector tidak boleh kosong!");
         return;
@@ -50,7 +51,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
         body.html = html;
     }
 
-    // Tampilkan loading
+    // tampilin loading
     document.getElementById('treeContainer').innerHTML = '<p class="placeholder-text">Memproses...</p>';
     document.getElementById('logContainer').innerHTML = '<li class="hint">Memuat log...</li>';
     
@@ -67,27 +68,33 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
             return;
         }
 
-        // Update statistik
+        // update statistik
         document.getElementById('visitCount').innerText = data.visitCount ?? '-';
         document.getElementById('maxDepth').innerText = data.maxDepth ?? '-';
         document.getElementById('timeMs').innerText = data.elapsedTime ?? '-';
         document.getElementById('matchedCount').innerText = data.matchedCount ?? 0;
 
-        // Render pohon DOM
+        // render pohon dom
         if (data.tree) {
             document.getElementById('treeContainer').innerHTML = '<ul>' + renderTree(data.tree) + '</ul>';
         } else {
             document.getElementById('treeContainer').innerHTML = '<p class="placeholder-text">Tidak ada pohon DOM</p>';
         }
 
-        // Tampilkan log traversal
+        // tampilin log traversal
         if (data.traversalLog && data.traversalLog.length > 0) {
             document.getElementById('logContainer').innerHTML = renderLog(data.traversalLog);
             resetHighlights();
-            // Jalankan animasi traversal
-            await animateTraversal(data.traversalLog);
-            // Setelah animasi selesai, highlight jalur dari root ke setiap node yang matched
-            highlightMatchedPaths(data.traversalLog);
+
+            if (enableAnimation) {
+                // animasi traversal step by step
+                await animateTraversal(data.traversalLog);
+                // highlight jalur matched
+                highlightMatchedPaths(data.traversalLog);
+            } else {
+                // tandai semua node visited dan matched
+                applyAllHighlights(data.traversalLog);
+            }
         } else {
             document.getElementById('logContainer').innerHTML = '<li class="hint">Tidak ada log traversal.</li>';
         }
@@ -98,7 +105,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     }
 });
 
-// Render tree dengan data-index
+// render tree
 function renderTree(node, depth = 0) {
     if (!node) return '';
     const idx = node.nodeIndex;
@@ -114,7 +121,7 @@ function renderTree(node, depth = 0) {
     return `<li>${tagDisplay}${childrenHtml}</li>`;
 }
 
-// Render log traversal
+// render log traversal
 function renderLog(entries) {
     return entries.map(entry => {
         const matchedBadge = entry.matched ? '<span class="matched-badge">✓ MATCH</span>' : '';
@@ -130,19 +137,42 @@ function renderLog(entries) {
     }).join('');
 }
 
-// Animasi traversal langkah per langkah
+// menscroll ke node tertentu
+function scrollToNode(nodeElement) {
+    if (!nodeElement) return;
+    const container = document.querySelector('.canvas-container');
+    if (!container) return;
+    
+    // posisi relatif node terhadap container
+    const containerRect = container.getBoundingClientRect();
+    const nodeRect = nodeElement.getBoundingClientRect();
+    const scrollTop = container.scrollTop;
+    const scrollLeft = container.scrollLeft;
+    
+    // offset supaya node berada di tengah container
+    const targetTop = scrollTop + nodeRect.top - containerRect.top - (containerRect.height / 2) + (nodeRect.height / 2);
+    const targetLeft = scrollLeft + nodeRect.left - containerRect.left - (containerRect.width / 2) + (nodeRect.width / 2);
+    
+    container.scrollTo({
+        top: targetTop,
+        left: targetLeft,
+        behavior: 'smooth'
+    });
+}
+
+// animasi traversal
 async function animateTraversal(logs) {
     const delay = 300;
     for (let i = 0; i < logs.length; i++) {
         const step = logs[i];
         
-        // Highlight di panel log
+        // highlight di panel log
         const logEntries = document.querySelectorAll('#logContainer li');
         if (logEntries[i]) {
             logEntries[i].classList.add('current-step');
         }
 
-        // Highlight node di pohon
+        // highlight node di pohon
         const targetNode = document.querySelector(`.node-element[data-index="${step.nodeIndex}"]`);
         if (targetNode) {
             const parentLi = targetNode.closest('li');
@@ -152,6 +182,9 @@ async function animateTraversal(logs) {
                 targetNode.classList.add('matched');
             }
             targetNode.classList.add('current-step');
+            
+            // autoscroll ke node yang lagi dikunjungin
+            scrollToNode(targetNode);
         }
 
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -161,12 +194,28 @@ async function animateTraversal(logs) {
     }
 }
 
-// Highlight jalur dari root ke setiap node yang ditemukan (matched)
-// Hanya untuk ancestor yang sudah memiliki class 'visited' (sudah dikunjungi)
+// terapin semua highlight tanpa animasi
+function applyAllHighlights(traversalLog) {
+    // langsung tandai semua node visited dan matched
+    for (const step of traversalLog) {
+        const targetNode = document.querySelector(`.node-element[data-index="${step.nodeIndex}"]`);
+        if (targetNode) {
+            const parentLi = targetNode.closest('li');
+            targetNode.classList.add('visited');
+            if (parentLi) parentLi.classList.add('visited');
+            if (step.matched) {
+                targetNode.classList.add('matched');
+            }
+        }
+    }
+    // highlight jalur matched
+    highlightMatchedPaths(traversalLog);
+}
+
+// highlight jalur dari root ke setiap node matched
 function highlightMatchedPaths(traversalLog) {
     if (!traversalLog || traversalLog.length === 0) return;
     
-    // Kumpulkan nodeIndex yang matched
     const matchedIndices = new Set();
     traversalLog.forEach(entry => {
         if (entry.matched) {
@@ -180,7 +229,6 @@ function highlightMatchedPaths(traversalLog) {
         if (nodeSpan) {
             const li = nodeSpan.closest('li');
             if (li) {
-                // Naik ke ancestor, tapi hanya yang sudah memiliki class 'visited'
                 let current = li;
                 while (current && current.tagName === 'LI') {
                     if (current.classList.contains('visited')) {
@@ -193,7 +241,7 @@ function highlightMatchedPaths(traversalLog) {
     });
 }
 
-// Reset semua highlight sebelum animasi baru
+// reset semua highlight
 function resetHighlights() {
     document.querySelectorAll('.node-element').forEach(el => {
         el.classList.remove('visited', 'matched', 'current-step');
