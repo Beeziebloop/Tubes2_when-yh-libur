@@ -1,4 +1,4 @@
-package backend
+package main
 import(
 	"fmt"
 	"io"
@@ -35,7 +35,7 @@ func fetchHTML(url string) (string, error){
 }
 
 //basically dia yang handling ngeload html dari user input (baik dalam bentuk url atau mentahan)
-func loadHTML(input string) (*Node, error){
+func LoadHTML(input string) (*Node, error){
 	input = strings.TrimSpace(input)
 	if input == ""{
 		return nil, fmt.Errorf("input kosong!")

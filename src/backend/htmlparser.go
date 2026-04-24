@@ -1,4 +1,4 @@
-package backend
+package main
 
 import (
 	"fmt"
@@ -111,7 +111,7 @@ func parseHTML(rawHTML string) *Node {
 }
 
 //ini buat basic structural checking pada DOM tree, bakalan return error string kalau ada issues, empty string kalau aman
-func validateHTML(root *Node) error{
+func ValidateHTML(root *Node) error{
 	if root == nil{
 		return fmt.Errorf("html structure error, tree kosong (html kosong atau invalid)")
 	}

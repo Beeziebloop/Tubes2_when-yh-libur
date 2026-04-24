@@ -1,4 +1,4 @@
-package backend
+package main
 
 type AttributeSelector struct {
     Name string
