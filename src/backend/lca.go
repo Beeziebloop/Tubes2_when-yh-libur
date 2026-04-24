@@ -1,4 +1,4 @@
-package backend
+package main
 //algoritma lca menggunakan binary lifting ini mengambil referensi dari https://cp-algorithms.com/graph/lca_binary_lifting.html serta mengambil inspirasi dari https://www.youtube.com/watch?v=oib-XsjFa-M
 //berikut adalah tahapannya preprocessing untuk binary lifting:
 //1. dfs traversal dulu untuk mencatat waktu masuk (tin) dan waktu keluar (tout) tiap node
