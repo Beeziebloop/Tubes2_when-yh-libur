@@ -1,4 +1,4 @@
-package backend
+package main
 
 import "time"
 
@@ -22,6 +22,7 @@ type StepLog struct{
 	Depth int
 	Is_matched bool
 	Algorithm string //bfs atau dfs
+	NodeIndex int 
 }
 
 type MatchFunc func(node *Node, selector string) bool
@@ -45,7 +46,7 @@ func maxFullTreeDepth(root *Node) int{
 }
 
 //dengan menggunakan referensi dari mediumnya Timothy Britt dan StackOverflow, algoritma ini menggunakan sebuah queue dengan konsep FIFO
-func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth int) TraversalRes{
+func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth int, indexMap map[*Node]int) TraversalRes{
 	start := time.Now()
 	result := TraversalRes{
 		MatchedNodes: []*Node{},
@@ -80,6 +81,8 @@ func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 		}
 		//cek apakah nodenya ngematch sama selector
 		matched := matchF(currentNode, selector)
+		//ambil nodeIndex dari map
+		nodeIdx := indexMap[currentNode]
 		//catat step kedalam transversal log
 		result.TraversalLog = append(result.TraversalLog, StepLog{
 			Step: step,
@@ -89,6 +92,7 @@ func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 			Depth: depth,
 			Is_matched: matched,
 			Algorithm: "bfs",
+			NodeIndex: nodeIdx,
 		})
 		if matched{
 			result.MatchedNodes = append(result.MatchedNodes, currentNode)
@@ -111,7 +115,7 @@ func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 }
 
 //dengan menggunakan referensi dari mediumnya Timothy Britt dan StackOverflow, algoritma ini menggunakan sebuah stack LIFO
-func DFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth int) TraversalRes{
+func DFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth int, indexMap map[*Node]int) TraversalRes{
 	start := time.Now()
 	result := TraversalRes{
 		MatchedNodes: []*Node{},
@@ -147,6 +151,8 @@ func DFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 		}
 		//cek apakah nodenya ngematch sama selector
 		matched := matchF(currentNode, selector)
+		//ambil nodeIndex dari map
+		nodeIdx := indexMap[currentNode]
 		//catat stepnya ke traversal log
 		result.TraversalLog = append(result.TraversalLog, StepLog{
 			Step: step,
@@ -156,6 +162,7 @@ func DFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 			Depth: depth,
 			Is_matched: matched,
 			Algorithm: "dfs",
+			NodeIndex: nodeIdx,
 		})
 		if matched{
 			result.MatchedNodes = append(result.MatchedNodes, currentNode)
@@ -183,14 +190,14 @@ const(
 )
 
 //main entry point yang dipanggil dari handler, ngekomputasi dulu full max depth tree, baru mulai bfs/dfs
-func Search(root *Node, selector string, algoType AlgorithmType, matchF MatchFunc, topN int) TraversalRes{
+func Search(root *Node, selector string, algoType AlgorithmType, matchF MatchFunc, topN int, indexMap map[*Node]int) TraversalRes{
 	maxDepth := maxFullTreeDepth(root)
 	switch algoType{
 	case AlgoBFS:
-		return BFS(root, selector, matchF, topN, maxDepth)
+		return BFS(root, selector, matchF, topN, maxDepth, indexMap)
 	case AlgoDFS:
-		return DFS(root, selector, matchF, topN, maxDepth)
+		return DFS(root, selector, matchF, topN, maxDepth, indexMap)
 	default:
-		return BFS(root, selector, matchF, topN, maxDepth) //defaultnya ke bfs
+		return BFS(root, selector, matchF, topN, maxDepth, indexMap) //defaultnya ke bfs
 	}
 }
