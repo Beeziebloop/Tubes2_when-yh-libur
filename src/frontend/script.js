@@ -71,7 +71,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
         document.getElementById('visitCount').innerText = data.visitCount ?? '-';
         document.getElementById('maxDepth').innerText = data.maxDepth ?? '-';
         document.getElementById('timeMs').innerText = data.elapsedTime ?? '-';
-        document.getElementById('matchedCount').innerText = data.matchedNodes?.length ?? 0;
+        document.getElementById('matchedCount').innerText = data.matchedCount ?? 0;
 
         // Render pohon DOM
         if (data.tree) {
