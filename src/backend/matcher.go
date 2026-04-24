@@ -23,7 +23,7 @@ func matchSelectorRecursive(node *Node, sel *SelectorNode) bool {
 		return false
 	}
 
-	// kalau paling kiri udah berarti selesai
+	// kalo paling kiri udah berarti selesai
 	if sel.Prev == nil {
 		return true
 	}
@@ -44,10 +44,10 @@ func matchSelectorRecursive(node *Node, sel *SelectorNode) bool {
 		return false
 
 	case "adjacent_sibling":
-		return matchSelectorRecursive(node.ImmediateSiblingBefore(), sel.Prev)
+		return matchSelectorRecursive(node.ImmediateSiblingsBeforeNow(), sel.Prev)
 
 	case "general_sibling":
-		siblings := node.SiblingsBefore()
+		siblings := node.SiblingsBeforeNow()
 		for i := len(siblings) - 1; i >= 0; i-- {
 			if matchSelectorRecursive(siblings[i], sel.Prev) {
 				return true
@@ -76,7 +76,7 @@ func matchNode(dom *Node, selector *SelectorNode) bool {
 
 	// class
 	for _, c := range selector.Classes {
-		if !dom.HasClass(c) {
+		if !dom.HasClasses(c) {
 			return false
 		}
 	}

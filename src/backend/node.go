@@ -34,6 +34,12 @@ func (n *Node) HasClasses(class string) bool{
 	return false
 }
 
+//ngembaliin nilai atribut dari map, atau string kosong kalo gaada
+func (n *Node) GetAttribute(key string) (string, bool) {
+    val, ok := n.Attributes[key]
+    return val, ok
+}
+
 //return semua sanak saudara yang datang sebelum node sekarang, dipake buat adjacent dan general sibling selector
 func (n *Node) SiblingsBeforeNow() []*Node{
 	if n.Parent == nil{

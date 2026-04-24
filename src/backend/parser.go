@@ -12,7 +12,7 @@ func ParseSelector(input string) *SelectorNode {
 	return current
 }
 
-// ubah string input menjadi tokens
+// ubah string input jadi tokens
 func tokenize(input string) []string {
 	var isAttribute bool
 	var token strings.Builder
@@ -69,8 +69,7 @@ func tokenize(input string) []string {
 	return tokens
 }
 
-// ubah tokens menjadi SelectorNode
-// ubah tokens menjadi SelectorNode
+// ubah tokens jadi SelectorNode
 func convertTokensToNodes(tokens []string) *SelectorNode {
 	head := &SelectorNode{}
 	current := head
@@ -103,7 +102,7 @@ func convertTokensToNodes(tokens []string) *SelectorNode {
 	return head
 }
 
-// helper untuk parse atribut
+// buat parse atribut
 func parseAttribute(t string) AttributeSelector {
 	attribute:= AttributeSelector{}
 	var builder strings.Builder
@@ -149,7 +148,7 @@ func parseAttribute(t string) AttributeSelector {
 	return attribute
 }
 
-// helper untuk mapping combinator ke nama relasi
+// buat mapping combinator ke nama relasi
 func mapRelation(t string) string {
 	switch t {
 	case " ": return "descendant"

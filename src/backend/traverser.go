@@ -24,6 +24,8 @@ type StepLog struct{
 	Algorithm string //bfs atau dfs
 }
 
+type MatchFunc func(node *Node, selector string) bool
+
 //nyari maximum depth dari seluruh DOM tree
 func maxFullTreeDepth(root *Node) int{
 	if root == nil{
