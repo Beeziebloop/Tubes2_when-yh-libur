@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOM Traversal Visualizer - IF2211</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>DOM Traversal Visualizer</h1>
+    <p class="subtitle">Tugas Besar 2 IF2211 - Strategi Algoritma</p>
+  </header>
+
+  <main class="main-layout">
+    <section class="card control-panel">
+      <h2>Konfigurasi</h2>
+      
+      <div class="input-group">
+        <label>Sumber Input</label>
+        <div class="tabs">
+          <button type="button" class="tab-btn active" id="btn-url" onclick="switchTab('url')">URL Website</button>
+          <button type="button" class="tab-btn" id="btn-raw" onclick="switchTab('raw')">Raw HTML</button>
+        </div>
+        
+        <div id="input-url-container">
+          <input type="text" id="url" placeholder="https://example.com" />
+        </div>
+
+        <div id="input-raw-container" class="hidden">
+          <textarea id="html-raw" rows="8" placeholder="<html>...</html>"></textarea>
+        </div>
+      </div>
+
+      <div class="grid-inputs">
+        <div>
+          <label>Algoritma</label>
+          <select id="algorithm">
+            <option value="BFS">Breadth First Search (BFS)</option>
+            <option value="DFS">Depth First Search (DFS)</option>
+          </select>
+        </div>
+        <div>
+          <label>Top N Results</label>
+          <input type="number" id="topN" value="-1" min="-1" step="1" />
+          <small class="input-hint">-1 = tampilkan semua hasil</small>
+        </div>
+      </div>
+
+      <label>CSS Selector</label>
+      <input type="text" id="selector" placeholder="Contoh: div.container > p" value="" />
+
+      <button id="searchBtn" class="primary-btn">Mulai Penelusuran</button>
+    </section>
+
+    <section class="card visualization-area">
+      <div class="viz-header">
+        <h2>Visualisasi Pohon DOM</h2>
+      </div>
+      <div id="treeContainer" class="canvas-container">
+        <p class="placeholder-text">Hasil parsing pohon akan tampil di sini...</p>
+      </div>
+    </section>
+
+    <section class="card stats-panel">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Visited Nodes</span>
+          <span id="visitCount" class="stat-value">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Max Depth</span>
+          <span id="maxDepth" class="stat-value">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Time</span>
+          <span id="timeMs" class="stat-value">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Matches</span>
+          <span id="matchedCount" class="stat-value">-</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card log-panel">
+      <h2>Log Traversal</h2>
+      <div class="log-wrapper">
+        <ul id="logContainer" class="log-list">
+          <li class="hint">Belum ada aktivitas penelusuran.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

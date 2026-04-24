@@ -1,0 +1,300 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f0f2f5;
+  color: #333;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* TATA LETAK GRID UTAMA */
+.main-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas: 
+    "input tree"
+    "input stats"
+    "log log";
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* PENUGASAN AREA */
+.control-panel { grid-area: input; align-self: start; }
+.visualization-area { grid-area: tree; }
+.stats-panel { grid-area: stats; }
+.log-panel { grid-area: log; }
+
+/* CARD STYLING */
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* TAB & INPUT VISIBILITY */
+.tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* FORM SPACING */
+.input-group, .grid-inputs, .control-panel label {
+  margin-bottom: 16px;
+}
+
+.grid-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  text-align: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 70px;
+}
+
+.stat-label { font-size: 0.8rem; color: #666; }
+.stat-value { font-weight: bold; font-size: 1.2rem; color: #007bff; }
+
+/* FORM ELEMENTS */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.primary-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-weight: bold;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #218838;
+}
+
+/* MEDIA QUERY UNTUK HP */
+@media (max-width: 850px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "input"
+      "tree"
+      "stats"
+      "log";
+  }
+}
+
+/* ========== TREE VISUALIZATION ========== */
+.canvas-container ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.canvas-container li {
+  position: relative;
+  padding: 8px 0 8px 32px;
+  margin: 0;
+  line-height: 1.6;
+  list-style: none;
+}
+
+/* Garis vertikal untuk semua li (kecuali root) */
+.canvas-container li::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 0;
+  border-left: 2px solid #ccc;
+  height: 100%;
+  transition: border-color 0.2s ease;
+}
+
+/* Garis horizontal untuk semua li (kecuali root) */
+.canvas-container li::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 20px;
+  border-top: 2px solid #ccc;
+  width: 16px;
+  transition: border-color 0.2s ease;
+}
+
+/* Root: hilangkan garis vertikal dan horizontal */
+.canvas-container > ul > li::before,
+.canvas-container > ul > li::after {
+  display: none;
+}
+
+/* Untuk child terakhir, garis vertikal hanya sampai setengah */
+.canvas-container li:last-child::before {
+  height: 22px;
+}
+
+/* Highlight jalur traversal (visited) */
+.canvas-container li.visited::before,
+.canvas-container li.visited::after {
+  border-color: #fdcb6e !important;
+}
+
+/* Highlight jalur final yang ditemukan (matched path) */
+.canvas-container li.matched-path::before,
+.canvas-container li.matched-path::after,
+.canvas-container li.matched-path.visited::before,
+.canvas-container li.matched-path.visited::after {
+  border-color: #00b894 !important;
+  border-width: 2px !important;
+}
+
+/* STYLING NODE */
+.node-element {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: white;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
+}
+
+/* Node yang dikunjungi (visited) */
+.node-element.visited {
+  background-color: #fff3cd;
+  border-left: 4px solid #fdcb6e;
+  padding-left: 10px;
+}
+
+/* Node yang match (final) */
+.node-element.matched {
+  background-color: #00b894 !important;
+  color: white !important;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 184, 148, 0.8) !important;
+  border: 2px solid #00967e !important;
+  border-radius: 20px;
+  padding: 4px 16px;
+  transform: scale(1.02);
+}
+
+/* Langkah aktif saat animasi */
+.node-element.current-step {
+  outline: 3px solid #0984e3;
+  box-shadow: 0 0 12px rgba(9, 132, 227, 0.5);
+  background-color: #e3f2fd;
+}
+
+/* Badge di log */
+.matched-badge {
+  background: #28a745;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.log-list {
+  list-style: none;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.log-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.log-list li.current-step {
+  background-color: #e3f2fd;
+  font-weight: bold;
+}
+
+.hint {
+  color: #888;
+  font-style: italic;
+}
+
+.placeholder-text {
+  color: #aaa;
+  text-align: center;
+  padding: 20px;
+}
