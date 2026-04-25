@@ -307,14 +307,15 @@ button:disabled {
   padding-left: 7px;
 }
 .node-element.matched {
-  background-color: #00b894 !important;
-  color: white !important;
-  font-weight: bold;
-  box-shadow: 0 0 8px rgba(0,184,148,0.6) !important;
-  border: 1px solid #00967e !important;
-  border-radius: 16px;
-  padding: 2px 12px;
-  transform: scale(1.01);
+    background-color: #d1f7ed; 
+    border: 1px solid #00b894;
+    border-left: 4px solid #00b894;
+    color: #333 !important; 
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,184,148,0.2) !important;
+    border-radius: 4px;
+    padding: 2px 8px;
+    transform: scale(1.02);
 }
 .node-element.current-step {
   outline: 2px solid #0984e3;
@@ -333,6 +334,17 @@ button:disabled {
   outline: 3px solid #9b59b6;
   background-color: #f3e5f5;
   box-shadow: 0 0 0 2px #9b59b6;
+}
+.node-index {
+    color: #888;
+    font-size: 0.7rem;
+    margin-left: 4px;
+}
+.node-attrs {
+    color: #333;
+    font-size: 0.7rem;
+    margin-left: 6px;
+    font-style: normal;
 }
 
 /* LCA UI */

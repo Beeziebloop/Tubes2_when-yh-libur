@@ -162,10 +162,19 @@ function scrollToNode(nodeElement) {
 function renderTree(node, depth = 0) {
     if (!node) return '';
     const idx = node.nodeIndex;
-    const classNames = node.classes ? node.classes.join(' ') : '';
-    const idAttr = node.id ? `#${node.id}` : '';
+    const classNames = node.classes ? node.classes.join(' .') : '';
+    const idAttr = node.id ? ` #${node.id}` : '';
+    let attrsHtml = '';
+    if (node.attributes) {
+        const attrs = Object.entries(node.attributes);
+        if (attrs.length > 0) {
+            attrsHtml = ' <span class="node-attrs">[' + attrs.map(([k,v]) => `${k}="${v}"`).join(', ') + ']</span>';
+        }
+    }
     const tagDisplay = `<span class="node-element" data-index="${idx}">
+        <span class="node-index">[${idx}]</span>
         <strong>${node.tag}</strong>${idAttr}${classNames ? ` .${classNames}` : ''}
+        ${attrsHtml}
     </span>`;
     let childrenHtml = '';
     if (node.children && node.children.length) {
@@ -178,12 +187,18 @@ function renderLog(entries) {
     return entries.map(entry => {
         const badge = entry.matched ? '<span class="matched-badge">✓ MATCH</span>' : '';
         const classStr = entry.nodeClass?.join(' ') || '-';
+        let attrsStr = '-';
+        if (entry.nodeAttributes && Object.keys(entry.nodeAttributes).length > 0) {
+            attrsStr = Object.entries(entry.nodeAttributes).map(([k,v]) => `${k}="${v}"`).join(', ');
+        }
         return `<li>
             <strong>Step ${entry.step}</strong> | 
             Tag: ${entry.nodeTag} | 
             ID: ${entry.nodeId || '-'} | 
             Class: ${classStr} | 
-            Depth: ${entry.depth} 
+            Attributes: ${attrsStr} | 
+            Depth: ${entry.depth} | 
+            Index: ${entry.nodeIndex}
             ${badge}
         </li>`;
     }).join('');

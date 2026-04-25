@@ -19,6 +19,7 @@ type StepLog struct{
 	N_Tag string
 	N_ID string
 	N_Classes []string
+	N_Attributes map[string]string
 	Depth int
 	Is_matched bool
 	Algorithm string //bfs atau dfs
@@ -89,6 +90,7 @@ func BFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 			N_Tag: currentNode.Tag,
 			N_ID: currentNode.ID,
 			N_Classes: currentNode.Classes,
+			N_Attributes: currentNode.Attributes,
 			Depth: depth,
 			Is_matched: matched,
 			Algorithm: "bfs",
@@ -159,6 +161,7 @@ func DFS(root *Node, selector string, matchF MatchFunc, topN int, treeMaxDepth i
 			N_Tag: currentNode.Tag,
 			N_ID: currentNode.ID,
 			N_Classes: currentNode.Classes,
+			N_Attributes: currentNode.Attributes,
 			Depth: depth,
 			Is_matched: matched,
 			Algorithm: "dfs",

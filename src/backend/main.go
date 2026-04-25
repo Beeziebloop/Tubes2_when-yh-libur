@@ -12,22 +12,24 @@ import (
 
 // buat nampung data dom tree
 type TreeNode struct {
-	Tag       string      `json:"tag"`
-	ID        string      `json:"id"`
-	Classes   []string    `json:"classes"`
-	NodeIndex int         `json:"nodeIndex"`
-	Children  []*TreeNode `json:"children"`
+	Tag       	string      		`json:"tag"`
+	ID        	string      		`json:"id"`
+	Classes   	[]string    		`json:"classes"`
+	NodeIndex 	int         		`json:"nodeIndex"`
+	Attributes 	map[string]string	`json:"attributes"`
+	Children  	[]*TreeNode 		`json:"children"`
 }
 
 // buat nyatet log tiap langkah
 type TraversalLogEntry struct {
-	Step      int      `json:"step"`
-	NodeTag   string   `json:"nodeTag"`
-	NodeId    string   `json:"nodeId"`
-	NodeClass []string `json:"nodeClass"`
-	Depth     int      `json:"depth"`
-	Matched   bool     `json:"matched"`
-	NodeIndex int      `json:"nodeIndex"`
+	Step      		int      			`json:"step"`
+	NodeTag   		string   			`json:"nodeTag"`
+	NodeId    		string   			`json:"nodeId"`
+	NodeClass 		[]string 			`json:"nodeClass"`
+	NodeAttributes	map[string]string 	`json:"nodeAttributes,omitempty"`
+	Depth     		int      			`json:"depth"`
+	Matched   		bool     			`json:"matched"`
+	NodeIndex 		int      			`json:"nodeIndex"`
 }
 
 // SearchRequest dari frontend
@@ -101,6 +103,7 @@ func serializeTree(node *Node, indexMap map[*Node]int) *TreeNode {
 		ID: node.ID,
 		Classes: node.Classes,
 		NodeIndex: indexMap[node],
+		Attributes: node.Attributes,
 		Children: []*TreeNode{},
 	}
 	for _, child := range node.Children {
@@ -118,6 +121,7 @@ func convertStepLog(logs []StepLog) []TraversalLogEntry {
 			NodeTag: l.N_Tag,
 			NodeId: l.N_ID,
 			NodeClass: l.N_Classes,
+			NodeAttributes: l.N_Attributes,
 			Depth: l.Depth,
 			Matched: l.Is_matched,
 			NodeIndex: l.NodeIndex,
