@@ -223,6 +223,9 @@ func handleLCA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pathA := getPathToAncestor(nodeA, lcaNode, currentIndexMap)
+	pathB := getPathToAncestor(nodeB, lcaNode, currentIndexMap)
+
 	response := map[string]interface{}{
 		"success":   true,
 		"tag":       lcaNode.Tag,
@@ -230,8 +233,25 @@ func handleLCA(w http.ResponseWriter, r *http.Request) {
 		"classes":   lcaNode.Classes,
 		"depth":     currentLCATable.depth[lcaNode],
 		"nodeIndex": currentIndexMap[lcaNode],
+		"pathA":     pathA,
+		"pathB":     pathB,
 	}
 	json.NewEncoder(w).Encode(response)
+}
+
+// helper buat dapetin path dari node ke ancestor
+func getPathToAncestor(node, ancestor *Node, indexMap map[*Node]int) []int {
+    path := []int{}
+    for n := node; n != ancestor; n = n.Parent {
+        if n == nil {
+            break
+        }
+        path = append(path, indexMap[n])
+    }
+    if ancestor != nil {
+        path = append(path, indexMap[ancestor])
+    }
+    return path
 }
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {

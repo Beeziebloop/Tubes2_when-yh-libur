@@ -344,19 +344,69 @@ button:disabled {
   opacity: 0.9;
 }
 
-/* LCA selection */
+/* ========== LCA SELECTION & PATHS ========== */
+
+/* Node A */
 .node-element.selected-a {
-  outline: 2px solid #007bff;
-  background-color: #cfe5ff;
+  background-color: #2563eb !important; 
+  border-color: #1e40af !important;
+  color: white !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  font-weight: bold;
 }
+
+/* Path A */
+.node-element.path-a {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1e40af !important;
+  font-weight: normal;
+}
+
+/* Node B */
 .node-element.selected-b {
-  outline: 2px solid #28a745;
-  background-color: #d4edda;
+  background-color: #f59e0b !important; 
+  border-color: #d97706 !important;
+  color: white !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  font-weight: bold;
 }
+
+/* Path B */
+.node-element.path-b {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+  font-weight: normal;
+}
+
+/* Node Hasil LCA */
 .node-element.lca-node {
-  outline: 2px solid #9b59b6;
-  background-color: #f3e5f5;
-  box-shadow: 0 0 0 2px #9b59b6;
+  background-color: #4f46e5 !important; 
+  border-color: #3730a3 !important;
+  color: white !important;
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+  font-weight: bold;
+}
+
+.node-element.selected-a .node-index,
+.node-element.selected-a .node-attrs,
+.node-element.selected-b .node-index,
+.node-element.selected-b .node-attrs,
+.node-element.lca-node .node-index,
+.node-element.lca-node .node-attrs {
+  color: white !important;
+  opacity: 0.85;
+}
+
+.node-element.path-a .node-attrs,
+.node-element.path-b .node-attrs,
+.node-element.path-a .node-index,
+.node-element.path-b .node-index {
+  color: inherit !important;
+  opacity: 0.7;
 }
 
 /* ========== LCA UI ========== */
@@ -381,8 +431,8 @@ button:disabled {
   margin-bottom: 5px;
 }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot-a { background: #007bff; }
-.dot-b { background: #28a745; }
+.dot-a { background: #2563eb; }
+.dot-b { background: #f59e0b; }
 .node-placeholder { font-weight: bold; color: #007bff; font-family: monospace; }
 
 #lcaResultArea:not(:empty) {

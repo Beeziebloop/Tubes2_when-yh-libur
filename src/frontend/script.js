@@ -36,6 +36,8 @@ function setAppMode(mode) {
     currentMode = mode;
     const btnCss = document.getElementById('btn-mode-css');
     const btnLca = document.getElementById('btn-mode-lca');
+    const statsPanel = document.querySelector('.stats-panel');
+    const logPanel = document.querySelector('.log-panel');
 
     if (mode === 'css') {
         btnCss.classList.add('active');
@@ -43,12 +45,21 @@ function setAppMode(mode) {
         cssPanel.style.display = 'block';
         lcaPanel.style.display = 'none';
         buildTreeBtn.style.display = 'none';
+
+        // tampilin statistik dan log
+        if (statsPanel) statsPanel.style.display = 'block';
+        if (logPanel) logPanel.style.display = 'block';
+
     } else {
         btnCss.classList.remove('active');
         btnLca.classList.add('active');
         cssPanel.style.display = 'none';
         lcaPanel.style.display = 'block';
         buildTreeBtn.style.display = 'block';
+        
+        // sembunyiin statistik dan log
+        if (statsPanel) statsPanel.style.display = 'none';
+        if (logPanel) logPanel.style.display = 'none';
         
         resetLCA();
         lcaActive = false;
@@ -68,7 +79,7 @@ function resetLCA() {
 
     // hapus highlight warna di domtree
     document.querySelectorAll('.node-element').forEach(el => {
-        el.classList.remove('selected-a', 'selected-b', 'lca-node');
+        el.classList.remove('selected-a', 'selected-b', 'lca-node', 'path-a', 'path-b');
     });
 
     if (currentMode === 'lca') {
@@ -487,6 +498,25 @@ findLCABtn.addEventListener('click', async () => {
         if (lcaSpan) {
             lcaSpan.classList.add('lca-node');
             scrollToNode(lcaSpan);
+        }
+
+        // hapus highlight path sebelumnya
+        document.querySelectorAll('.node-element').forEach(el => {
+            el.classList.remove('path-a', 'path-b');
+        });
+
+        // highlight path A dan path B
+        if (data.pathA) {
+            data.pathA.forEach(idx => {
+                const nodeSpan = document.querySelector(`.node-element[data-index="${idx}"]`);
+                if (nodeSpan) nodeSpan.classList.add('path-a');
+            });
+        }
+        if (data.pathB) {
+            data.pathB.forEach(idx => {
+                const nodeSpan = document.querySelector(`.node-element[data-index="${idx}"]`);
+                if (nodeSpan) nodeSpan.classList.add('path-b');
+            });
         }
 
         lcaActive = false;
