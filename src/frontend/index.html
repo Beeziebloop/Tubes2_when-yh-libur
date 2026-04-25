@@ -13,57 +13,86 @@
   </header>
 
   <main class="main-layout">
+    <!-- Control Panel -->
     <section class="card control-panel">
       <h2>Konfigurasi</h2>
-      
+
+      <!-- Tombol Mode -->
+      <div class="tabs mode-tabs">
+        <button type="button" class="tab-btn active" id="btn-mode-css" onclick="setAppMode('css')">CSS Selector</button>
+        <button type="button" class="tab-btn" id="btn-mode-lca" onclick="setAppMode('lca')">LCA</button>
+      </div>
+
+      <!-- Sumber Input -->
       <div class="input-group">
-        <label>Sumber Input</label>
-        <div class="tabs">
-          <button type="button" class="tab-btn active" id="btn-url" onclick="switchTab('url')">URL Website</button>
-          <button type="button" class="tab-btn" id="btn-raw" onclick="switchTab('raw')">Raw HTML</button>
-        </div>
-        
+        <label>Input HTML</label>
+        <select id="inputSourceSelect" onchange="switchInputSource(this.value)">
+          <option value="url">URL Website</option>
+          <option value="raw">Raw HTML</option>
+        </select>
         <div id="input-url-container">
           <input type="text" id="url" placeholder="https://example.com" />
         </div>
-
         <div id="input-raw-container" class="hidden">
-          <textarea id="html-raw" rows="8" placeholder="<html>...</html>"></textarea>
+          <textarea id="html-raw" rows="5" placeholder="<html>...</html>"></textarea>
         </div>
+        <button id="buildTreeBtn" class="secondary-btn" style="margin-top: 12px; display: none;">Build DOM Tree</button>
       </div>
 
-      <label>CSS Selector</label>
-      <input type="text" id="selector" placeholder="Contoh: div.container > p" value="" />
+      <hr class="divider" />
 
-      <label>Algoritma</label>
-      <select id="algorithm">
-        <option value="BFS">Breadth First Search (BFS)</option>
-        <option value="DFS">Depth First Search (DFS)</option>
-      </select>
-
-      <label>Top N Results</label>
-      <input type="number" id="topN" value="-1" min="-1" step="1" />
-      <small class="input-hint">-1 = tampilkan semua hasil</small>
-
-      <div style="margin: 16px 0;">
-        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap;">
+      <!-- Panel CSS Selector -->
+      <div id="cssPanel">
+        <div class="input-group">
+          <label for="algorithm">Algoritma</label>
+          <select id="algorithm">
+            <option value="BFS">Breadth First Search (BFS)</option>
+            <option value="DFS">Depth First Search (DFS)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="selector">CSS Selector</label>
+          <input type="text" id="selector" placeholder="Contoh: div.container > p" />
+        </div>
+        <div class="input-group">
+          <label for="topN">Top N Results (-1 = semua)</label>
+          <input type="number" id="topN" value="-1" />
+        </div>
+        <div class="checkbox-group">
           <input type="checkbox" id="enableAnimation" checked />
-          <span>Tampilkan animasi traversal</span>
-        </label>
+          <label for="enableAnimation">Tampilkan animasi traversal</label>
+        </div>
+        <button id="searchBtn" class="primary-btn">Search</button>
       </div>
 
-      <button id="searchBtn" class="primary-btn">Search</button>
+      <!-- Panel LCA -->
+      <div id="lcaPanel" style="display: none;">
+        <p class="instruction-text">Klik dua node di DOM tree untuk memilih Node A dan Node B</p>
+        <div class="lca-selection-box">
+          <div class="selection-item">
+            <span class="dot dot-a"></span> Node A: <span id="selectedA" class="node-placeholder">-</span>
+          </div>
+          <div class="selection-item">
+            <span class="dot dot-b"></span> Node B: <span id="selectedB" class="node-placeholder">-</span>
+          </div>
+        </div>
+        <button id="resetLCASelectionBtn" class="secondary-btn" style="margin-bottom: 8px;">Reset Pilihan</button>
+        <button id="findLCABtn" class="primary-btn" disabled>Search LCA</button>
+        <div id="lcaResultArea" style="margin-top: 12px;"></div>
+      </div>
     </section>
 
+    <!-- Visualisasi Tree -->
     <section class="card visualization-area">
       <div class="viz-header">
-        <h2>Visualisasi Pohon DOM</h2>
+        <h2>Visualisasi DOM Tree</h2>
       </div>
       <div id="treeContainer" class="canvas-container">
-        <p class="placeholder-text">Hasil parsing pohon akan tampil di sini...</p>
+        <p class="placeholder-text">Hasil parsing tree akan tampil di sini...</p>
       </div>
     </section>
 
+    <!-- Statistik -->
     <section class="card stats-panel">
       <div class="stats-grid">
         <div class="stat-item">
@@ -85,6 +114,7 @@
       </div>
     </section>
 
+    <!-- Log Traversal -->
     <section class="card log-panel">
       <h2>Log Traversal</h2>
       <div class="log-wrapper">

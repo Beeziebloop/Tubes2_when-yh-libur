@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 // buat nampung data dom tree
@@ -50,7 +51,28 @@ type SearchResponse struct {
 	Tree         *TreeNode           `json:"tree"`
 }
 
-// buat kasih nomor urut ke tiap node
+// BuildRequest buat endpoint /api/build
+type BuildRequest struct {
+	URL  string `json:"url"`
+	HTML string `json:"html"`
+}
+
+type BuildResponse struct {
+	Success bool       `json:"success"`
+	Message string     `json:"message,omitempty"`
+	Tree    *TreeNode  `json:"tree"`
+}
+
+// global state buat lca
+var (
+	currentRoot *Node
+	currentIndexMap map[*Node]int
+	currentNodeByIndex map[int]*Node
+	currentLCATable *LCATable
+	stateMutex sync.Mutex
+)
+
+// buat kasih nomer urut ke tiap node
 func assignIndices(root *Node) map[*Node]int {
 	indexMap := make(map[*Node]int)
 	idx := 0
@@ -104,27 +126,108 @@ func convertStepLog(logs []StepLog) []TraversalLogEntry {
 	return entries
 }
 
-func main() {
-	frontendDir := "../frontend"
-	if _, err := os.Stat(frontendDir); os.IsNotExist(err) {
-		log.Fatalf("Frontend directory not found at %s", frontendDir)
+func handleBuild(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		json.NewEncoder(w).Encode(BuildResponse{Success: false, Message: "Method not allowed"})
+		return
 	}
 
-	// handler file statis
-	fs := http.FileServer(http.Dir(frontendDir))
-	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			http.ServeFile(w, r, filepath.Join(frontendDir, "index.html"))
-			return
-		}
-		fs.ServeHTTP(w, r)
-	}))
+	var req BuildRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.NewEncoder(w).Encode(BuildResponse{Success: false, Message: "Invalid JSON"})
+		return
+	}
+	if req.URL == "" && req.HTML == "" {
+		json.NewEncoder(w).Encode(BuildResponse{Success: false, Message: "URL or HTML required"})
+		return
+	}
 
-	// api endpoint
-	http.HandleFunc("/api/search", handleSearch)
+	var input string
+	if req.URL != "" {
+		input = req.URL
+	} else {
+		input = req.HTML
+	}
 
-	log.Println("Server started at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	root, err := LoadHTML(input)
+	if err != nil {
+		json.NewEncoder(w).Encode(BuildResponse{Success: false, Message: err.Error()})
+		return
+	}
+	if err := ValidateHTML(root); err != nil {
+		json.NewEncoder(w).Encode(BuildResponse{Success: false, Message: "HTML structure error: " + err.Error()})
+		return
+	}
+
+	indexMap := assignIndices(root)
+	updateGlobalState(root, indexMap) // simpan state untuk LCA nanti
+
+	tree := serializeTree(root, indexMap)
+	json.NewEncoder(w).Encode(BuildResponse{Success: true, Tree: tree})
+}
+
+// dipanggil setelah parsing html dan assign indices
+func updateGlobalState(root *Node, indexMap map[*Node]int) {
+	stateMutex.Lock()
+	defer stateMutex.Unlock()
+	currentRoot = root
+	currentIndexMap = indexMap
+	// mapping balik
+	nodeByIndex := make(map[int]*Node)
+	for node, idx := range indexMap {
+		nodeByIndex[idx] = node
+	}
+	currentNodeByIndex = nodeByIndex
+	// bangun LCATable
+	currentLCATable = buildLCATable(root)
+}
+
+// nanganin request lca
+func handleLCA(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Method not allowed"})
+		return
+	}
+	var req struct {
+		NodeIndexA int `json:"nodeIndexA"`
+		NodeIndexB int `json:"nodeIndexB"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Invalid JSON"})
+		return
+	}
+
+	stateMutex.Lock()
+	defer stateMutex.Unlock()
+	if currentLCATable == nil || currentNodeByIndex == nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Belum ada pohon DOM. Lakukan pencarian terlebih dahulu."})
+		return
+	}
+
+	nodeA := currentNodeByIndex[req.NodeIndexA]
+	nodeB := currentNodeByIndex[req.NodeIndexB]
+	if nodeA == nil || nodeB == nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "Node tidak valid"})
+		return
+	}
+
+	lcaNode := currentLCATable.lca(nodeA, nodeB)
+	if lcaNode == nil {
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "message": "LCA tidak ditemukan"})
+		return
+	}
+
+	response := map[string]interface{}{
+		"success":   true,
+		"tag":       lcaNode.Tag,
+		"id":        lcaNode.ID,
+		"classes":   lcaNode.Classes,
+		"depth":     currentLCATable.depth[lcaNode],
+		"nodeIndex": currentIndexMap[lcaNode],
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {
@@ -175,7 +278,10 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	// bikin index map
 	indexMap := assignIndices(root)
 
-	// Buat match function
+	// simpen state lca
+	updateGlobalState(root, indexMap)
+
+	// bikin match function
 	matchFunc := MakeMatchFunc(req.Selector)
 
 	// pilih mau pake cara dfs atau bfs
@@ -214,4 +320,29 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(response)
+}
+
+func main() {
+	frontendDir := "../frontend"
+	if _, err := os.Stat(frontendDir); os.IsNotExist(err) {
+		log.Fatalf("Frontend directory not found at %s", frontendDir)
+	}
+
+	// handler file statis
+	fs := http.FileServer(http.Dir(frontendDir))
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			http.ServeFile(w, r, filepath.Join(frontendDir, "index.html"))
+			return
+		}
+		fs.ServeHTTP(w, r)
+	}))
+
+	// api endpoint
+	http.HandleFunc("/api/search", handleSearch)
+	http.HandleFunc("/api/build", handleBuild)
+	http.HandleFunc("/api/lca", handleLCA)
+
+	log.Println("Server started at http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

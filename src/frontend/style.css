@@ -44,18 +44,16 @@ h1 {
     "control tree"
     "stats stats"
     "log log";
-  gap: 15px; /* dari 20px */
+  gap: 15px;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
 
-/* AREA */
 .control-panel {
   grid-area: control;
   align-self: start;
 }
-
 .visualization-area {
   grid-area: tree;
   display: flex;
@@ -63,36 +61,30 @@ h1 {
   overflow: hidden;
   min-height: 0;
 }
-
 .stats-panel {
   grid-area: stats;
 }
-
 .log-panel {
   grid-area: log;
 }
 
-/* CARD STYLING */
 .card {
   background: white;
   border-radius: 8px;
-  padding: 15px; /* dari 20px */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
-
 .card h2 {
   font-size: 1.2rem;
   margin-top: 0;
   margin-bottom: 12px;
 }
 
-/* TAB & INPUT VISIBILITY */
 .tabs {
   display: flex;
   gap: 5px;
   margin-bottom: 12px;
 }
-
 .tab-btn {
   flex: 1;
   padding: 6px;
@@ -104,86 +96,48 @@ h1 {
   transition: all 0.2s ease;
   font-size: 0.85rem;
 }
-
 .tab-btn.active {
   background: #007bff;
   color: white;
 }
-
 .hidden {
   display: none !important;
 }
 
-/* FORM SPACING */
-.input-group,
-.control-panel label {
+.input-group, .control-panel label {
   margin-bottom: 12px;
 }
-
 .control-panel label {
   font-size: 0.85rem;
   display: block;
   margin-bottom: 4px;
 }
-
-.grid-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.input-hint {
-  display: block;
-  font-size: 0.65rem;
-  color: #888;
-  margin-top: 2px;
-}
-
-/* STATS GRID */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  text-align: center;
-}
-
-.stat-item {
+.checkbox-group {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
-  min-height: 60px;
+  justify-content: flex-start;
+  gap: 8px;
+  white-space: nowrap;
+  margin: 12px 0;
+  width: fit-content;
+  margin-right: auto;
+  margin-left: 0;
+}
+.checkbox-group label {
+  margin: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
-.stat-label {
-  font-size: 0.7rem;
-  color: #666;
-}
-
-.stat-value {
-  font-weight: bold;
-  font-size: 1rem;
-  color: #007bff;
-}
-
-/* FORM ELEMENTS */
-input,
-select,
-textarea {
+select, input, textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 2px;
-  margin-bottom: 2px;
   font-size: 0.85rem;
 }
-
-input:focus,
-select:focus,
-textarea:focus {
+select:focus, input:focus, textarea:focus {
   outline: none;
   border-color: #007bff;
 }
@@ -194,42 +148,91 @@ textarea:focus {
   border: none;
   padding: 10px;
   font-weight: bold;
-  margin-top: 8px;
-  cursor: pointer;
-  width: 100%;
   border-radius: 5px;
   font-size: 0.9rem;
-  transition: background 0.2s ease;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+.primary-btn:hover { background: #218838; }
+
+.secondary-btn {
+  background-color: #4a69bd;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.2s;
 }
 
-.primary-btn:hover {
-  background: #218838;
+.secondary-btn:hover {
+  background-color: #3c58a4;
 }
+
+#resetLCASelectionBtn {
+  background-color: transparent;
+  color: #e17055;
+  border: 1px solid #e17055;
+  margin-top: 5px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+#resetLCASelectionBtn:hover {
+  background-color: #e17055;
+  color: white;
+}
+
+button:disabled {
+  background-color: #dfe6e9 !important;
+  color: #b2bec3 !important;
+  cursor: not-allowed;
+  border: none !important;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 15px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  text-align: center;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+}
+.stat-label { font-size: 0.7rem; color: #666; }
+.stat-value { font-weight: bold; font-size: 1rem; color: #007bff; }
 
 /* ========== VISUALISASI TREE ========== */
 .visualization-area .card {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 0;
 }
-
-.visualization-area h2 {
-  flex-shrink: 0;
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
 .canvas-container {
   flex: 1;
   overflow: auto;
-  min-height: 0;
   background: #fefefe;
   border-radius: 6px;
   border: 1px solid #e9ecef;
   padding: 8px;
 }
-
 .canvas-container > ul {
   display: inline-block;
   min-width: 100%;
@@ -237,23 +240,17 @@ textarea:focus {
   padding-left: 0;
   list-style: none;
 }
-
 .canvas-container ul {
   list-style: none;
   padding-left: 0;
   margin: 0;
 }
-
 .canvas-container li {
   position: relative;
   padding: 4px 0 4px 28px;
-  margin: 0;
   line-height: 1.4;
-  list-style: none;
   white-space: normal;
 }
-
-/* Garis vertikal untuk semua li (kecuali root) */
 .canvas-container li::before {
   content: "";
   position: absolute;
@@ -261,10 +258,8 @@ textarea:focus {
   top: 0;
   border-left: 1.5px solid #ccc;
   height: 100%;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s;
 }
-
-/* Garis horizontal untuk semua li (kecuali root) */
 .canvas-container li::after {
   content: "";
   position: absolute;
@@ -272,27 +267,19 @@ textarea:focus {
   top: 16px;
   border-top: 1.5px solid #ccc;
   width: 16px;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s;
 }
-
-/* Root: hilangkan garis */
 .canvas-container > ul > li::before,
 .canvas-container > ul > li::after {
   display: none;
 }
-
-/* Untuk child terakhir, garis vertikal hanya sampai setengah */
 .canvas-container li:last-child::before {
   height: 18px;
 }
-
-/* Highlight jalur traversal (visited) */
 .canvas-container li.visited::before,
 .canvas-container li.visited::after {
   border-color: #fdcb6e !important;
 }
-
-/* Highlight jalur final yang ditemukan (matched path) */
 .canvas-container li.matched-path::before,
 .canvas-container li.matched-path::after,
 .canvas-container li.matched-path.visited::before,
@@ -301,55 +288,86 @@ textarea:focus {
   border-width: 2px !important;
 }
 
-/* STYLING NODE */
 .node-element {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.8rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
   background: white;
   position: relative;
   z-index: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   border: 1px solid #ddd;
 }
-
-/* Node yang dikunjungi (visited) */
 .node-element.visited {
   background-color: #fff3cd;
   border-left: 3px solid #fdcb6e;
   padding-left: 7px;
 }
-
-/* Node yang match (final) */
 .node-element.matched {
   background-color: #00b894 !important;
   color: white !important;
   font-weight: bold;
-  box-shadow: 0 0 8px rgba(0, 184, 148, 0.6) !important;
+  box-shadow: 0 0 8px rgba(0,184,148,0.6) !important;
   border: 1px solid #00967e !important;
   border-radius: 16px;
   padding: 2px 12px;
   transform: scale(1.01);
 }
-
-/* Langkah aktif saat animasi */
 .node-element.current-step {
   outline: 2px solid #0984e3;
-  box-shadow: 0 0 8px rgba(9, 132, 227, 0.5);
+  box-shadow: 0 0 8px rgba(9,132,227,0.5);
   background-color: #e3f2fd;
 }
+.node-element.selected-a {
+  outline: 3px solid #007bff;
+  background-color: #cfe5ff;
+}
+.node-element.selected-b {
+  outline: 3px solid #28a745;
+  background-color: #d4edda;
+}
+.node-element.lca-node {
+  outline: 3px solid #9b59b6;
+  background-color: #f3e5f5;
+  box-shadow: 0 0 0 2px #9b59b6;
+}
 
-/* Badge di log */
-.matched-badge {
-  background: #28a745;
-  color: white;
-  font-size: 0.65rem;
-  padding: 2px 5px;
-  border-radius: 10px;
-  margin-left: 6px;
+/* LCA UI */
+.lca-selection-box {
+  background: #f1f3f5;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+.instruction-text {
+  font-size: 0.75rem;
+  color: #636e72;
+  font-style: italic;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.selection-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-a { background: #007bff; }
+.dot-b { background: #28a745; }
+.node-placeholder { font-weight: bold; color: #007bff; font-family: monospace; }
+
+#lcaResultArea:not(:empty) {
+  margin-top: 10px;
+  padding: 10px;
+  background: #e8f4fd;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  border-left: 4px solid #007bff;
 }
 
 .log-list {
@@ -360,26 +378,23 @@ textarea:focus {
   font-family: monospace;
   font-size: 0.75rem;
 }
-
 .log-list li {
   padding: 4px 0;
   border-bottom: 1px solid #eee;
 }
-
-.log-list li strong {
-  font-size: inherit;
-}
-
 .log-list li.current-step {
   background-color: #e3f2fd;
   font-weight: bold;
 }
-
-.hint {
-  color: #888;
-  font-style: italic;
+.matched-badge {
+  background: #28a745;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  border-radius: 10px;
+  margin-left: 6px;
 }
-
+.hint { color: #888; font-style: italic; }
 .placeholder-text {
   color: #aaa;
   text-align: center;
@@ -387,24 +402,13 @@ textarea:focus {
   font-size: 0.8rem;
 }
 
-/* ========== RESPONSIVE (HP) ========== */
 @media (max-width: 700px) {
   .main-layout {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "control"
-      "tree"
-      "stats"
-      "log";
+    grid-template-areas: "control" "tree" "stats" "log";
     gap: 12px;
   }
-
-  .visualization-area {
-    min-height: 280px;
-  }
-
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
   }
 }
