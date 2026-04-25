@@ -361,7 +361,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	frontendDir := "frontend"
+	frontendDir := "src/frontend"
 	if _, err := os.Stat(frontendDir); os.IsNotExist(err) {
 		frontendDir = "../frontend"
 	}
