@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 // buat nampung data dom tree
@@ -39,6 +40,7 @@ type SearchRequest struct {
 	Algorithm string `json:"algorithm"`
 	Selector  string `json:"selector"`
 	TopN      int    `json:"topN"`
+	SaveLog   bool   `json:"saveLog"`
 }
 
 // SearchResponse buat frontend
@@ -227,14 +229,14 @@ func handleLCA(w http.ResponseWriter, r *http.Request) {
 	pathB := getPathToAncestor(nodeB, lcaNode, currentIndexMap)
 
 	response := map[string]interface{}{
-		"success":   true,
-		"tag":       lcaNode.Tag,
-		"id":        lcaNode.ID,
-		"classes":   lcaNode.Classes,
-		"depth":     currentLCATable.depth[lcaNode],
+		"success": true,
+		"tag": lcaNode.Tag,
+		"id": lcaNode.ID,
+		"classes": lcaNode.Classes,
+		"depth": currentLCATable.depth[lcaNode],
 		"nodeIndex": currentIndexMap[lcaNode],
-		"pathA":     pathA,
-		"pathB":     pathB,
+		"pathA": pathA,
+		"pathB": pathB,
 	}
 	json.NewEncoder(w).Encode(response)
 }
@@ -320,6 +322,18 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	// lakuin pencarian
 	result := Search(root, req.Selector, algoType, matchFunc, req.TopN, indexMap)
 
+	// simpen traversal log ke file
+	if req.SaveLog {
+		logDir := "logs"
+		if err := os.MkdirAll(logDir, 0755); err != nil {
+			log.Printf("Warning: gagal membuat folder logs: %v", err)
+		}
+		logFilename := filepath.Join(logDir, fmt.Sprintf("traversal_%d.txt", time.Now().Unix()))
+		if err := PrintTraversalLogResult(result, req.Selector, logFilename); err != nil {
+			log.Printf("Warning: gagal menyimpan log file: %v", err)
+		}
+	}
+
 	// bikin struktur pohon
 	tree := serializeTree(root, indexMap)
 
@@ -334,20 +348,23 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	elapsedStr := fmt.Sprintf("%.3f ms", elapsedMs)
 
 	response := SearchResponse{
-		Success:      true,
-		VisitCount:   result.VisCount,
-		MaxDepth:     result.MaxDepthVisited,
-		ElapsedTime:  elapsedStr,
+		Success: true,
+		VisitCount: result.VisCount,
+		MaxDepth: result.MaxDepthVisited,
+		ElapsedTime: elapsedStr,
 		MatchedCount: matchedCount,
 		TraversalLog: logEntries,
-		Tree:         tree,
+		Tree: tree,
 	}
 
 	json.NewEncoder(w).Encode(response)
 }
 
 func main() {
-	frontendDir := "../frontend"
+	frontendDir := "frontend"
+	if _, err := os.Stat(frontendDir); os.IsNotExist(err) {
+		frontendDir = "../frontend"
+	}
 	if _, err := os.Stat(frontendDir); os.IsNotExist(err) {
 		log.Fatalf("Frontend directory not found at %s", frontendDir)
 	}

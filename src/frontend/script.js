@@ -391,6 +391,7 @@ searchBtn.addEventListener('click', async () => {
     let topN = parseInt(document.getElementById('topN').value, 10);
     const isUrlMode = document.getElementById('inputSourceSelect').value === 'url';
     const enableAnimation = document.getElementById('enableAnimation').checked;
+    const saveLog = document.getElementById('saveLog').checked;
 
     // validasi input user
     if (isNaN(topN)) topN = -1;
@@ -410,7 +411,7 @@ searchBtn.addEventListener('click', async () => {
         return;
     }
 
-    let body = { algorithm, selector, topN };
+    let body = { algorithm, selector, topN, saveLog };
     if (isUrlMode) {
         const url = document.getElementById('url').value.trim();
         if (!url) return alert('Masukkan URL!');
