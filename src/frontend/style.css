@@ -68,6 +68,7 @@ h1 {
   grid-area: log;
 }
 
+/* ========== CARD COMPONENENT & TABS ========== */
 .card {
   background: white;
   border-radius: 8px;
@@ -104,6 +105,7 @@ h1 {
   display: none !important;
 }
 
+/* ========== FORM INPUT & CONTROL PANEL ========== */
 .input-group, .control-panel label {
   margin-bottom: 12px;
 }
@@ -142,6 +144,7 @@ select:focus, input:focus, textarea:focus {
   border-color: #007bff;
 }
 
+/* ========== BUTTON ========== */
 .primary-btn {
   background: #28a745;
   color: white;
@@ -167,7 +170,6 @@ select:focus, input:focus, textarea:focus {
   width: 100%;
   transition: background 0.2s;
 }
-
 .secondary-btn:hover {
   background-color: #3c58a4;
 }
@@ -184,7 +186,6 @@ select:focus, input:focus, textarea:focus {
   font-weight: 500;
   transition: all 0.2s;
 }
-
 #resetLCASelectionBtn:hover {
   background-color: #e17055;
   color: white;
@@ -203,6 +204,7 @@ button:disabled {
   margin: 15px 0;
 }
 
+/* ========== STATS DISPLAY ========== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -225,129 +227,139 @@ button:disabled {
   flex-direction: column;
   height: 100%;
 }
+
 .canvas-container {
   flex: 1;
   overflow: auto;
-  background: #fefefe;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 24px;
 }
-.canvas-container > ul {
-  display: inline-block;
-  min-width: 100%;
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-}
+
 .canvas-container ul {
   list-style: none;
-  padding-left: 0;
+  padding: 0;
   margin: 0;
 }
+
 .canvas-container li {
   position: relative;
-  padding: 4px 0 4px 28px;
-  line-height: 1.4;
-  white-space: normal;
+  padding: 8px 0 8px 35px; 
+  line-height: 1;
+  white-space: nowrap;
 }
+
+/* GARIS PENGHUBUNG */
 .canvas-container li::before {
   content: "";
   position: absolute;
-  left: 12px;
+  left: 15px;
   top: 0;
-  border-left: 1.5px solid #ccc;
+  border-left: 2px solid #adb5bd;
   height: 100%;
-  transition: border-color 0.2s;
 }
+
 .canvas-container li::after {
   content: "";
   position: absolute;
-  left: 12px;
-  top: 16px;
-  border-top: 1.5px solid #ccc;
-  width: 16px;
-  transition: border-color 0.2s;
+  left: 15px;
+  top: 22px;
+  border-top: 2px solid #adb5bd;
+  width: 20px;
 }
+
 .canvas-container > ul > li::before,
 .canvas-container > ul > li::after {
   display: none;
 }
+
 .canvas-container li:last-child::before {
-  height: 18px;
-}
-.canvas-container li.visited::before,
-.canvas-container li.visited::after {
-  border-color: #fdcb6e !important;
-}
-.canvas-container li.matched-path::before,
-.canvas-container li.matched-path::after,
-.canvas-container li.matched-path.visited::before,
-.canvas-container li.matched-path.visited::after {
-  border-color: #00b894 !important;
-  border-width: 2px !important;
+  height: 22px;
 }
 
+/* ========== NODE ========== */
 .node-element {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 0.8rem;
-  transition: all 0.2s;
-  background: white;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border: 2px solid #ced4da;
+  border-radius: 6px;
+  background-color: white;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8rem; 
+  color: #2d3436;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
 }
+
+.node-element b {
+  font-weight: 800;
+}
+
+/* Path Node */
+.node-element.path-node {
+  background-color: #d1fae5 !important;
+  border-color: #10b981 !important;
+  color: #065f46 !important;
+}
+
+/* Visited */
 .node-element.visited {
-  background-color: #fff3cd;
-  border-left: 3px solid #fdcb6e;
-  padding-left: 7px;
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
 }
+
+/* Matched */
 .node-element.matched {
-    background-color: #d1f7ed; 
-    border: 1px solid #00b894;
-    border-left: 4px solid #00b894;
-    color: #333 !important; 
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,184,148,0.2) !important;
-    border-radius: 4px;
-    padding: 2px 8px;
-    transform: scale(1.02);
+  background-color: #34d399 !important;
+  border-color: #059669 !important;
+  color: #064e3b !important;
+  box-shadow: 0 4px 12px rgba(52, 211, 153, 0.4);
+  transform: translateY(-1px);
 }
+
+/* Animasi */
 .node-element.current-step {
-  outline: 2px solid #0984e3;
-  box-shadow: 0 0 8px rgba(9,132,227,0.5);
-  background-color: #e3f2fd;
+  border-color: #3b82f6 !important;
+  background-color: #dbeafe;
+  color: #1e40af;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
+
+/* Text Elements */
+.node-index {
+  color: #6c757d;
+  font-size: 0.7rem;
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+.node-attrs {
+  color: inherit;      
+  font-size: 0.75rem;
+  font-weight: 400; 
+  opacity: 0.9;
+}
+
+/* LCA selection */
 .node-element.selected-a {
-  outline: 3px solid #007bff;
+  outline: 2px solid #007bff;
   background-color: #cfe5ff;
 }
 .node-element.selected-b {
-  outline: 3px solid #28a745;
+  outline: 2px solid #28a745;
   background-color: #d4edda;
 }
 .node-element.lca-node {
-  outline: 3px solid #9b59b6;
+  outline: 2px solid #9b59b6;
   background-color: #f3e5f5;
   box-shadow: 0 0 0 2px #9b59b6;
 }
-.node-index {
-    color: #888;
-    font-size: 0.7rem;
-    margin-left: 4px;
-}
-.node-attrs {
-    color: #333;
-    font-size: 0.7rem;
-    margin-left: 6px;
-    font-style: normal;
-}
 
-/* LCA UI */
+/* ========== LCA UI ========== */
 .lca-selection-box {
   background: #f1f3f5;
   padding: 12px;
@@ -382,6 +394,7 @@ button:disabled {
   border-left: 4px solid #007bff;
 }
 
+/* ========== TRAVERSAL LOG PANEL ========== */
 .log-list {
   list-style: none;
   padding: 0;
